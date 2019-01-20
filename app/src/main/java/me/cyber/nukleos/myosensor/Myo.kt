@@ -44,6 +44,8 @@ class Myo(private val device: BluetoothDevice) : BluetoothGattCallback() {
     private var characteristicEmg1: BluetoothGattCharacteristic? = null
     private var characteristicEmg2: BluetoothGattCharacteristic? = null
     private var characteristicEmg3: BluetoothGattCharacteristic? = null
+    private var characteristicBattery: BluetoothGattCharacteristic? = null
+    private var serviceBattery: BluetoothGattService? = null
 
     private val writeQueue: LinkedList<BluetoothGattDescriptor> = LinkedList()
     private val readQueue: LinkedList<BluetoothGattCharacteristic> = LinkedList()
@@ -154,6 +156,11 @@ class Myo(private val device: BluetoothDevice) : BluetoothGattCallback() {
                 // We send the ready event as soon as the characteristicCommand is ready.
                 connectionStatusSubject.onNext(MyoStatus.READY)
             }
+        }
+
+        serviceBattery = gatt.getService(BATTERY_LEVEL_SERVICE)
+        serviceBattery?.apply {
+            characteristicBattery = this.getCharacteristic(BATTERY_LEVEL_CHARACTERISTIC)
         }
     }
 
